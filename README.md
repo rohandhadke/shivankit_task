@@ -20,11 +20,11 @@ http://<your-ec2-public-ip> (e.g. http://51.20.191.112)
 
 ### ➕ Add Task
 
-![Add Task](screenshots/add_task.png)
+![Add Task](screenshots/addnewtask.png)
 
-### ✅ Mark as Done
+### ✅ Login
 
-![Mark as Done](screenshots/done_task.png)
+![Mark as Done](screenshots/login.png)
 
 ---
 
