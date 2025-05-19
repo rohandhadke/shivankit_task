@@ -53,7 +53,6 @@ http://<your-ec2-public-ip> (e.g. http://51.20.191.112)
 
 ---
 
-## 🚀 Setup & Deployment Guide
 
 ### ✅ Prerequisites
 
@@ -64,10 +63,5 @@ http://<your-ec2-public-ip> (e.g. http://51.20.191.112)
 
 ---
 
-### 1. Clone the Project
-
-```bash
-git clone https://github.com/rohandhadke/shivankit_task.git
-cd todo_app
 
 
