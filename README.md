@@ -47,7 +47,7 @@ http://<your-ec2-public-ip> (e.g. http://51.20.191.112)
 
 - **Frontend:** HTML, CSS
 - **Backend:** Flask
-- **Database:** SQLite (or file-based data)
+- **Database:** PostgreSQL (or file-based data)
 - **Server:** Gunicorn + Nginx
 - **Hosting:** AWS EC2 (Amazon Linux 2)
 
