@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding-bottom: 50px;
+        }
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .search-container {
+            margin: 20px 0;
+        }
+        .note-card {
+            margin-bottom: 0;
+            transition: transform 0.2s;
+            height: 100%;
+            border-radius: 8px;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        .note-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border-color: rgba(0,0,0,0.2);
+        }
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+        }
+        .card-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        .card-text {
+            flex-grow: 1;
+            color: #555;
+        }
+        .card-footer {
+            background-color: transparent;
+            border-top: none;
+            padding-top: 0;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 50px 0;
+            color: #6c757d;
+        }
+        .empty-state i {
+            font-size: 50px;
+            margin-bottom: 20px;
+            color: #dee2e6;
+        }
+        .profile-icon {
+            font-size: 5rem;
+            color: #0d6efd;
+            margin-bottom: 1rem;
+        }
+        .profile-info {
+            margin-bottom: 1.5rem;
+        }
+        .profile-info-item {
+            margin-bottom: 0.5rem;
+        }
+        .dropdown-toggle::after {
+            margin-left: 0.5em;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">to-do App</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="{{url_for('login')}}" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-2"></i>
+                            <span id="profileLinkText">Login</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                            <li><a class="dropdown-item" href="#" id="profileMenuItem"><i class="fas fa-user me-2"></i>Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="logoutMenuItem"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <!-- Search and Add Note -->
+        <div class="row search-container">
+            <div class="col-md-8">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="searchInput" placeholder="Search tasks...">
+                    <button class="btn btn-outline-secondary" type="button" id="searchButton">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-4 mt-2 mt-md-0">
+                <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#addNoteModal">
+                    <i class="fas fa-plus me-2"></i>Add Note
+                </button>
+            </div>
+        </div>
+
+        <!-- Notes Grid -->
+        <div class="row mt-4 g-4" id="notesContainer">
+            <!-- Notes will be dynamically inserted here -->
+            <div class="empty-state col-12">
+                <i class="far fa-clipboard"></i>
+                <h4>No tasks yet</h4>
+                <p>Add your first task by clicking the "Add Note" button</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Note Modal -->
+    <div class="modal fade" id="addNoteModal" tabindex="-1" aria-labelledby="addNoteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addNoteModalLabel">Add New Task</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="noteForm">
+                        <div class="mb-3">
+                            <label for="noteTitle" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="noteTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="noteContent" class="form-label">Content</label>
+                            <textarea class="form-control" id="noteContent" rows="4" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveNoteBtn">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="profileModalLabel">User Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="profile-icon">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-info-item d-flex align-items-center mb-3">
+                            <strong class="me-2">Username:</strong>
+                            <div id="profileUsername" class="text-muted">user123</div>
+                        </div>
+                        <div class="profile-info-item d-flex align-items-center">
+                            <label for="profilePhone" class="form-label mb-0 me-2"><strong>Phone:</strong></label>
+                            <input type="tel" class="form-control w-50" id="profilePhone" placeholder="Enter phone number">
+                        </div>
+                        <div class="profile-info-item d-flex align-items-center">
+                            <label for="profilePhone" class="form-label mb-0 me-2"><strong>Email:</strong></label>
+                            <input type="email" class="form-control w-50" id="profileEmail" placeholder="Enter Email">
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveProfileBtn">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Note Modal -->
+    <div class="modal fade" id="editNoteModal" tabindex="-1" aria-labelledby="editNoteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editNoteModalLabel">Edit Task</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editNoteForm">
+                        <input type="hidden" id="editNoteId">
+                        <div class="mb-3">
+                            <label for="editNoteTitle" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="editNoteTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editNoteContent" class="form-label">Content</label>
+                            <textarea class="form-control" id="editNoteContent" rows="4" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="updateNoteBtn">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+<script>
+    let accessToken = localStorage.getItem('token');
+    let isLoggedIn = !!accessToken;
+    let notes = [];
+    let userProfile = {
+        username: 'user' + Math.floor(Math.random() * 1000),
+        phone: ''
+    };
+
+    document.addEventListener('DOMContentLoaded', function () {
+        if (isLoggedIn) {
+            fetchUserProfile().then(profile => {
+                if (profile) {
+                    userProfile = profile;
+                    localStorage.setItem('userProfile', JSON.stringify(profile));
+                    updateAuthUI(true, profile.username);
+                } else {
+                    updateAuthUI(true, userProfile.username);
+                }
+            });
+            fetchTasksFromServer();
+        } else {
+            updateAuthUI(false, null);
+            renderNotes([]);
+        }
+
+        // Profile click
+        document.getElementById('profileMenuItem').addEventListener('click', function (e) {
+            e.preventDefault();
+            const storedProfile = JSON.parse(localStorage.getItem('userProfile'));
+            document.getElementById('profileUsername').textContent = storedProfile?.username || 'N/A';
+            document.getElementById('profilePhone').value = storedProfile?.phone || '';
+            const profileModal = new bootstrap.Modal(document.getElementById('profileModal'));
+            profileModal.show();
+        });
+
+        // Logout
+        document.getElementById('logoutMenuItem').addEventListener('click', handleLogout);
+
+        // Redirect to login if not logged in
+        /* document.getElementById('profileDropdown').addEventListener('click', function (e) {
+            if (!isLoggedIn) {
+                e.preventDefault();
+                window.location.href = '/login';
+            }
+        });*/ 
+
+        // Save profile
+        document.getElementById('saveProfileBtn').addEventListener('click', function () {
+            userProfile.phone = document.getElementById('profilePhone').value.trim();
+            localStorage.setItem('userProfile', JSON.stringify(userProfile));
+            bootstrap.Modal.getInstance(document.getElementById('profileModal')).hide();
+            alert('Profile updated successfully!');
+        });
+
+        // Save new note
+        document.getElementById('saveNoteBtn').addEventListener('click', function () {
+            const title = document.getElementById('noteTitle').value.trim();
+            const content = document.getElementById('noteContent').value.trim();
+            
+            if (title && content) {
+                fetch('/tasks', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}`
+                    },
+                    body: JSON.stringify({ title, content })
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Please Login First!');
+                    return fetchTasksFromServer();
+                })
+                .then(() => {
+                    document.getElementById('noteForm').reset();
+                    bootstrap.Modal.getInstance(document.getElementById('addNoteModal')).hide();
+                })
+                .catch(err => alert(err.message));
+            }
+        });
+
+        // Update note
+        document.getElementById('updateNoteBtn').addEventListener('click', function () {
+            const noteId = parseInt(document.getElementById('editNoteId').value);
+            const title = document.getElementById('editNoteTitle').value.trim();
+            const content = document.getElementById('editNoteContent').value.trim();
+            if (title && content) {
+                fetch(`/tasks/${noteId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}`
+                    },
+                    body: JSON.stringify({ title, content })
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Failed to update task');
+                    return fetchTasksFromServer();
+                })
+                .then(() => {
+                    bootstrap.Modal.getInstance(document.getElementById('editNoteModal')).hide();
+                })
+                .catch(err => alert(err.message));
+            }
+        });
+
+        // Search notes
+        document.getElementById('searchButton').addEventListener('click', searchNotes);
+        document.getElementById('searchInput').addEventListener('keyup', function (e) {
+            if (e.key === 'Enter') searchNotes();
+        });
+    });
+
+    // Shared Functions Outside DOMContentLoaded
+
+    function handleLogout(e) {
+        e.preventDefault();
+        const token = localStorage.getItem('token');
+        fetch('/logout', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }).catch(err => {
+            console.warn('Logout failed:', err);
+        });
+
+        localStorage.removeItem('token');
+        localStorage.removeItem('userProfile');
+        accessToken = null;
+        isLoggedIn = false;
+        localStorage.removeItem('token');
+        localStorage.removeItem('userProfile');
+        alert('You have been logged out');
+        location.reload();
+        location.href = '/login'; // redirect instead of reload
+
+    }
+
+    function fetchTasksFromServer() {
+        if (!accessToken) {
+            alert("Please log in to view your tasks.");
+            return;
+        }
+
+        return fetch('/tasks', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        })
+        .then(res => {
+            if (!res.ok) throw new Error("Failed to fetch tasks");
+            return res.json();
+        })
+        .then(data => {
+            notes = data;
+            console.log(notes)
+            renderNotes(data);
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Could not load tasks.");
+        });
+    }
+
+    function searchNotes() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const filteredNotes = notes.filter(note =>
+            note.title.toLowerCase().includes(searchTerm) ||
+            note.content.toLowerCase().includes(searchTerm)
+        );
+        renderNotes(filteredNotes);
+    }
+
+    function renderNotes(notesToRender) {
+        const container = document.getElementById('notesContainer');
+        if (!notesToRender || notesToRender.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state col-12">
+                    <i class="far fa-clipboard"></i>
+                    <h4>No tasks found</h4>
+                    <p>Try a different search or add a new task</p>
+                </div>`;
+            return;
+        }
+        container.innerHTML = '';
+        notesToRender.forEach(note => {
+            const el = document.createElement('div');
+            el.className = 'col-md-6 col-lg-4';
+            el.innerHTML = `
+                <div class="card note-card">
+                    <div class="card-body">
+                        <h5 class="card-title">${note.title}</h5>
+                        <p class="card-text">${note.content}</p>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-muted">Created: ${note.created_at || 'N/A'}</small>
+                        <div class="task-actions">
+                            <button class="btn btn-sm btn-outline-primary edit-btn" data-id="${note.id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger delete-btn" data-id="${note.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(el);
+        });
+
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const noteId = parseInt(this.getAttribute('data-id'));
+                fetch(`/tasks/${noteId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${accessToken}` }
+                })
+                .then(res => {
+                    if (!res.ok) throw new Error('Failed to delete');
+                    return fetchTasksFromServer();
+                })
+                .catch(err => alert(err.message));
+            });
+        });
+
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const noteId = parseInt(this.getAttribute('data-id'));
+                const note = notes.find(n => n.id === noteId);
+                if (note) {
+                    document.getElementById('editNoteId').value = note.id;
+                    document.getElementById('editNoteTitle').value = note.title;
+                    document.getElementById('editNoteContent').value = note.content;
+                    const editModal = new bootstrap.Modal(document.getElementById('editNoteModal'));
+                    editModal.show();
+                }
+            });
+        });
+    }
+
+    function updateAuthUI(loggedIn, username) {
+        const profileLinkText = document.getElementById('profileLinkText');
+        //const profileDropdown = document.getElementById('profileDropdown');
+        const dropdownToggle = document.querySelector('.nav-link.dropdown-toggle');
+
+        if (loggedIn) {
+            profileLinkText.textContent = username;
+            dropdownToggle.setAttribute('data-bs-toggle', 'dropdown');
+         //   profileDropdown.style.display = 'block';
+        } else {
+            profileLinkText.textContent = 'Login';
+            dropdownToggle.removeAttribute('data-bs-toggle');
+            profileDropdown.classList.remove('show');
+         //   profileDropdown.style.display = 'none';
+        }
+    }
+
+    function fetchUserProfile() {
+        if (!accessToken) return Promise.resolve(null);
+        return fetch('/profile', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        })
+        .then(res => {
+            if (!res.ok) throw new Error("Failed to fetch profile");
+            return res.json();
+        })
+        .catch(err => {
+            console.error("Failed to load user profile:", err);
+            return null;
+        });
+    }
+    document.getElementById('saveProfileBtn').addEventListener('click', function () {
+        const phone = document.getElementById('profilePhone').value;
+        const email = document.getElementById('profileEmail').value;
+        const token = localStorage.getItem('token'); // or however you store it
+
+        fetch('/update_profile', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`  // optional if you're using session
+            },
+            body: JSON.stringify({
+                phone: phone,
+                email: email
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert('Profile updated successfully!');
+                document.getElementById('profileModal').classList.remove('show');
+                document.body.classList.remove('modal-open');
+                document.querySelector('.modal-backdrop').remove();
+            } else {
+                alert('Update failed: ' + data.message);
+            }
+        })
+        .catch(err => {
+            console.error('Update error:', err);
+            alert('An error occurred while updating the profile.');
+        });
+    });
+</script>
+
+</body>
+</html>
