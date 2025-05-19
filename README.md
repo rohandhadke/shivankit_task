@@ -1,1 +1,73 @@
-# shivankit_task
+# 📝 To-Do App - Flask + AWS Deployment
+
+A simple and responsive To-Do List web application built using **FastAPI/Flask**, deployed on **AWS EC2**, and served using **Gunicorn** and **Nginx**.
+
+---
+
+## 🌐 Live URL
+
+http://<your-ec2-public-ip> (e.g. http://51.20.191.112)
+
+---
+
+## 📸 Screenshots
+
+> Replace the placeholder paths with actual image URLs or uploads.
+
+### ✅ Home Page
+
+![Home Page](screenshots/home.png)
+
+### ➕ Add Task
+
+![Add Task](screenshots/add_task.png)
+
+### ✅ Mark as Done
+
+![Mark as Done](screenshots/done_task.png)
+
+---
+
+## ⚙️ Features
+
+- Add new tasks
+- Mark tasks as complete
+- Delete tasks
+- Responsive frontend using HTML/CSS
+- Backend with Flask
+- Deployment with Gunicorn + Nginx
+- Hosted on AWS EC2 Free Tier
+
+---
+
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend:** HTML, CSS
+- **Backend:** Flask
+- **Database:** SQLite (or file-based data)
+- **Server:** Gunicorn + Nginx
+- **Hosting:** AWS EC2 (Amazon Linux 2)
+
+---
+
+## 🚀 Setup & Deployment Guide
+
+### ✅ Prerequisites
+
+- AWS EC2 instance (Amazon Linux 2)
+- SSH access to EC2
+- Flask project ready
+- Port 80 opened in EC2 Security Group
+
+---
+
+### 1. Clone the Project
+
+```bash
+git clone https://github.com/rohandhadke/shivankit_task.git
+cd todo_app
+
+
