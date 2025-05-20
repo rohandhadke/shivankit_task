@@ -419,17 +419,17 @@
                         <h5 class="card-title">${note.title}</h5>
                         <p class="card-text">${note.content}</p>
                     </div>
-                    <div class="card-footer">
-                        <small class="text-muted">Created: ${note.created_at || 'N/A'}</small>
-                        <div class="task-actions">
-                            <button class="btn btn-sm btn-outline-primary edit-btn" data-id="${note.id}">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger delete-btn" data-id="${note.id}">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                        <div class="card-footer d-flex justify-content-between align-items-center">
+                            <small class="text-muted mb-0">Created: ${note.created_at || 'N/A'}</small>
+                            <div class="task-actions">
+                                <button class="btn btn-sm btn-outline-primary edit-btn" data-id="${note.id}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger delete-btn" data-id="${note.id}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
                         </div>
-                    </div>
                 </div>
             `;
             container.appendChild(el);

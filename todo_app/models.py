@@ -1,7 +1,11 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+import pytz
 
 db = SQLAlchemy()
+
+def get_ist_time():
+    return datetime.now(pytz.timezone('Asia/Kolkata'))
 
 class User(db.Model):
     __tablename__ = 'user'
@@ -17,4 +21,4 @@ class Task(db.Model):
     title = db.Column(db.String(200))
     content = db.Column(db.Text)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=get_ist_time)
