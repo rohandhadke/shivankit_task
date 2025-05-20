@@ -8,7 +8,7 @@ def get_ist_time():
     return datetime.now(pytz.timezone('Asia/Kolkata'))
 
 class User(db.Model):
-    __tablename__ = 'user'
+    __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True)
     password = db.Column(db.String(200))
