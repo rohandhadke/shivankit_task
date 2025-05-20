@@ -163,7 +163,7 @@
                     const username = document.getElementById('loginUsername').value;
                     const password = document.getElementById('loginPassword').value;
 
-                    fetch('http://127.0.0.1:5000/login', {
+                    fetch('/login', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -199,7 +199,7 @@
                 if (signupForm.checkValidity()) {
                     const username = document.getElementById('signupUsername').value;
 
-                    fetch('http://127.0.0.1:5000/register', {
+                    fetch('/register', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'

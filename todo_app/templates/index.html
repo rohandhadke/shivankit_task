@@ -108,9 +108,6 @@
             <div class="col-md-8">
                 <div class="input-group">
                     <input type="text" class="form-control" id="searchInput" placeholder="Search tasks...">
-                    <button class="btn btn-outline-secondary" type="button" id="searchButton">
-                        <i class="fas fa-search"></i>
-                    </button>
                 </div>
             </div>
             <div class="col-md-4 mt-2 mt-md-0">
@@ -334,11 +331,6 @@
             }
         });
 
-        // Search notes
-        document.getElementById('searchButton').addEventListener('click', searchNotes);
-        document.getElementById('searchInput').addEventListener('keyup', function (e) {
-            if (e.key === 'Enter') searchNotes();
-        });
     });
 
     // Shared Functions Outside DOMContentLoaded
@@ -394,14 +386,17 @@
         });
     }
 
-    function searchNotes() {
-        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-        const filteredNotes = notes.filter(note =>
-            note.title.toLowerCase().includes(searchTerm) ||
-            note.content.toLowerCase().includes(searchTerm)
-        );
-        renderNotes(filteredNotes);
-    }
+        document.getElementById('searchInput').addEventListener('input', searchNotes);
+
+        function searchNotes() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filteredNotes = notes.filter(note =>
+                note.title.toLowerCase().includes(searchTerm) ||
+                note.content.toLowerCase().includes(searchTerm)
+            );
+            renderNotes(filteredNotes);
+        }
+
 
     function renderNotes(notesToRender) {
         const container = document.getElementById('notesContainer');
@@ -482,7 +477,7 @@
         } else {
             profileLinkText.textContent = 'Login';
             dropdownToggle.removeAttribute('data-bs-toggle');
-            profileDropdown.classList.remove('show');
+            //profileDropdown.classList.remove('show');
          //   profileDropdown.style.display = 'none';
         }
     }
