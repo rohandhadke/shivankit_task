@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from models import db, User
+from models import db, TodoUser
 from flask_jwt_extended import get_jwt
 
 
@@ -10,22 +10,22 @@ auth_bp = Blueprint("auth", __name__)
 @auth_bp.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
-    existing_user = User.query.filter_by(username=data['username']).first()
+    existing_user = TodoUser.query.filter_by(username=data['username']).first()
     if existing_user:   
         return jsonify(message="Username is already registered"), 409  
 
     hashed_password = generate_password_hash(data['password'])
-    user = User(username=data['username'], password=hashed_password)
-    db.session.add(user)
+    todo_user = TodoUser(username=data['username'], password=hashed_password)
+    db.session.add(todo_user)
     db.session.commit()
     return jsonify(message="User registered"), 201
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
-    user = User.query.filter_by(username=data['username']).first()
-    if user and check_password_hash(user.password, data['password']):
-        access_token = create_access_token(identity=str(user.id))
+    todo_user = TodoUser.query.filter_by(username=data['username']).first()
+    if todo_user and check_password_hash(todo_user.password, data['password']):
+        access_token = create_access_token(identity=str(todo_user.id))
         return jsonify(access_token=access_token), 200
     return jsonify(message="Invalid credentials"), 401
 
@@ -33,17 +33,17 @@ def login():
 @jwt_required()
 def get_profile():
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-    if not user:
+    todo_user = TodoUser.query.get(user_id)
+    if not todo_user:
         return jsonify(message="User not found"), 404
 
     response = {
-        "id": user.id,
-        "username": user.username
+        "id": todo_user.id,
+        "username": todo_user.username
     }
 
-    if hasattr(user, 'phone') and user.phone:
-        response["phone"] = user.phone
+    if hasattr(todo_user, 'phone') and todo_user.phone:
+        response["phone"] = todo_user.phone
 
     return jsonify(response), 200
 
@@ -71,12 +71,12 @@ def update_profile():
         return jsonify({'success': False, 'message': 'Phone and Email required'}), 400
 
     try:
-        user = User.query.get(user_id)
-        if not user:
+        todo_user = TodoUser.query.get(user_id)
+        if not todo_user:
             return jsonify({'success': False, 'message': 'User not found'}), 404
 
-        user.phone = phone
-        user.email = email
+        todo_user.phone = phone
+        todo_user.email = email
         db.session.commit()
 
         return jsonify({'success': True, 'message': 'Profile updated successfully'})

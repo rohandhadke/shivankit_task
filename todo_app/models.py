@@ -7,8 +7,8 @@ db = SQLAlchemy()
 def get_ist_time():
     return datetime.now(pytz.timezone('Asia/Kolkata'))
 
-class User(db.Model):
-    __tablename__ = 'users'
+class TodoUser(db.Model):
+    __tablename__ = 'todo_users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True)
     password = db.Column(db.String(200))
@@ -20,5 +20,5 @@ class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200))
     content = db.Column(db.Text)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('todo_users.id'))
     created_at = db.Column(db.DateTime, default=get_ist_time)
